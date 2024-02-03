@@ -4,16 +4,16 @@ namespace Macrix_REST_API_App.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class WeatherForecastController : ControllerBase
+    public class ExampleController : ControllerBase
     {
         private static readonly string[] Summaries = new[]
         {
         "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
     };
 
-        private readonly ILogger<WeatherForecastController> _logger;
+        private readonly ILogger<ExampleController> _logger;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        public ExampleController(ILogger<ExampleController> logger)
         {
             _logger = logger;
         }
@@ -29,5 +29,6 @@ namespace Macrix_REST_API_App.Controllers
             })
             .ToArray();
         }
+
     }
 }
