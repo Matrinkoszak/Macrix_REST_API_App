@@ -84,30 +84,33 @@ namespace Macrix_REST_API_App.Controllers
         // POST: api/People
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Person>> PostPerson(Person person)
+        public async Task<ActionResult<Person>> PostPerson(List<Person> people)
         {
-          if (_context.People == null)
-          {
-              return Problem("Entity set 'MacrixContext.People'  is null.");
-          }
-            _context.People.Add(person);
+            if (_context.People == null)
+            {
+                return Problem("Entity set 'MacrixContext.People'  is null.");
+            }
+            foreach (Person person in people)
+            {
+                _context.People.Add(person);
+            }
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
             {
-                if (PersonExists(person.Id))
+                foreach(Person person in people)
                 {
-                    return Conflict();
+                    if (PersonExists(person.Id))
+                    {
+                        return Conflict();
+                    }
                 }
-                else
-                {
-                    throw;
-                }
+                throw;
             }
 
-            return CreatedAtAction("GetPerson", new { id = person.Id }, person);
+            return CreatedAtAction("GetPeople", new {}, people);
         }
 
         // DELETE: api/People/5
