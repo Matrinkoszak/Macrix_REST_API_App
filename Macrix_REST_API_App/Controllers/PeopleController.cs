@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Macrix_REST_API_App.Models;
+using System.Text.RegularExpressions;
 
 namespace Macrix_REST_API_App.Controllers
 {
@@ -59,6 +60,10 @@ namespace Macrix_REST_API_App.Controllers
             {
                 return BadRequest();
             }
+            if(!IsPersonValid(person))
+            {
+                return BadRequest("One or more of the person entities has invalid data.");
+            }
 
             _context.Entry(person).State = EntityState.Modified;
 
@@ -92,7 +97,14 @@ namespace Macrix_REST_API_App.Controllers
             }
             foreach (Person person in people)
             {
-                _context.People.Add(person);
+                if (IsPersonValid(person))
+                {
+                    _context.People.Add(person);
+                }
+                else
+                {
+                    return BadRequest("One or more of the person entities has invalid data.");
+                }
             }
             try
             {
@@ -136,6 +148,45 @@ namespace Macrix_REST_API_App.Controllers
         private bool PersonExists(long id)
         {
             return (_context.People?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+        private bool IsPersonValid(Person person)
+        {
+            //multiple if statements for readibility
+            if (string.IsNullOrEmpty(person.FirstName))
+            {
+                return false;
+            }
+            if (string.IsNullOrEmpty(person.LastName))
+            {
+                return false;
+            }
+            if (string.IsNullOrEmpty(person.StreetName))
+            {
+                return false;
+            }
+            if (string.IsNullOrEmpty(person.Town))
+            {
+                return false;
+            }
+            //checks if number has proper length for a Polish standard
+            if(person.PhoneNumber.ToString().Length != 9)
+            {
+                return false;
+            }
+            Regex postalCodeSchema = new Regex("^[0-9]{2}-[0-9]{3}$");
+            if (!postalCodeSchema.IsMatch(person.PostalCode))
+            {
+                return false;
+            }
+            //SQLite does not have datetime type, therefore it's necessary to test if it's properly formated as a string 
+            Regex dateSchema = new Regex("^(19|20)[0-9]{2}-(0[1-9]|1[1,2])-(0[1-9]|[12][0-9]|3[01])T(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$");
+            if (!dateSchema.IsMatch(person.DateOfBirth))
+            {
+                return false;
+            }
+            return true;
+
         }
     }
 }
