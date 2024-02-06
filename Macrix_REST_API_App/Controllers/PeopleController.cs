@@ -180,7 +180,7 @@ namespace Macrix_REST_API_App.Controllers
                 return false;
             }
             //SQLite does not have datetime type, therefore it's necessary to test if it's properly formated as a string 
-            Regex dateSchema = new Regex("^(19|20)[0-9]{2}-(0[1-9]|1[1,2])-(0[1-9]|[12][0-9]|3[01])T(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$");
+            Regex dateSchema = new Regex("^(19|20)[0-9]{2}-(0[1-9]|1[1,2])-(0[1-9]|[12][0-9]|3[01])T(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9].[0-9]{3}Z$");
             if (!dateSchema.IsMatch(person.DateOfBirth))
             {
                 return false;
