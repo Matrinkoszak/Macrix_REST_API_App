@@ -1,0 +1,1 @@
+I've tried testing it with xUnit, but as the only test-worthy function in it is private and mocking DbSet was taking longer than writing the whole application, I've abandoned testing this application.
